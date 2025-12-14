@@ -6,6 +6,7 @@ export default function AdminUserDetail() {
   const { uid } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [updatingSheet, setUpdatingSheet] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -56,6 +57,17 @@ export default function AdminUserDetail() {
     }
   };
 
+  const toggleSheetAccess = async (sheetId, allow) => {
+    try {
+      setUpdatingSheet(sheetId);
+      await api.post(`/api/admin/users/${uid}/permissions`, { sheetId, allow });
+      const { data } = await api.get(`/api/admin/users/${uid}`);
+      setData(data);
+    } finally {
+      setUpdatingSheet('');
+    }
+  };
+
   if (loading) return <div className="center">Loading user...</div>;
   if (!data?.user) return <div className="card">User not found.</div>;
 
@@ -75,8 +87,42 @@ export default function AdminUserDetail() {
         <div style={{height:12}} />
         <h4>Stats</h4>
         <div>Total Done: {data.stats?.doneCount ?? 0}</div>
+        <div>Problems Added: {data.stats?.problemsAddedCount ?? 0}</div>
         <div style={{height:12}} />
         <Link to="/admin/users" className="button secondary">Back to Users</Link>
+      </div>
+
+      <div className="card">
+        <h3>Sheet Access</h3>
+        {!data.sheetAccess?.length ? (
+          <div className="small">No sheets yet.</div>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr><th>Sheet</th><th>Visibility</th><th>Access</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              {data.sheetAccess.map((s) => (
+                <tr key={s.id}>
+                  <td>{s.name}</td>
+                  <td>{s.visibility}</td>
+                  <td>{s.hasAccess ? 'Allowed' : 'Blocked'}</td>
+                  <td>
+                    {s.visibility === 'restricted' ? (
+                      s.hasAccess ? (
+                        <button className="button secondary" disabled={updatingSheet === s.id} onClick={()=>toggleSheetAccess(s.id, false)}>Remove</button>
+                      ) : (
+                        <button className="button" disabled={updatingSheet === s.id} onClick={()=>toggleSheetAccess(s.id, true)}>Grant</button>
+                      )
+                    ) : (
+                      <span className="small">Public sheet</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <div className="card">

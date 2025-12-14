@@ -10,11 +10,15 @@ export default function Navbar() {
     <nav className="nav">
       <Link to="/" className="brand">FECPC Tracker</Link>
       <Link to="/">Leaderboard</Link>
-      {user && <Link to="/sheets">Sheets</Link>}
+  {user && <Link to="/sheets">Sheets</Link>}
+  {user && <Link to="/badges">My Badges</Link>}
+  {user && !profile?.approved && <Link to="/profile">Profile</Link>}
       {isAdmin && (
         <>
           <Link to="/admin/users">Admin Users</Link>
           <Link to="/admin/sheets">Admin Sheets</Link>
+          <Link to="/admin/badges">Admin Badges</Link>
+          <Link to="/admin/activity">Activity</Link>
         </>
       )}
       <div style={{ marginLeft: 'auto' }} />

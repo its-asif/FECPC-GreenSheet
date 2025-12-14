@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
   phoneNumber: String,
   approved: { type: Boolean, default: false },
   isAdmin: { type: Boolean, default: false },
+  allowedSheets: { type: [mongoose.Schema.Types.ObjectId], ref: 'Sheet', default: [] },
 }, { timestamps: true });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

@@ -10,6 +10,7 @@ export default function AdminSheetDetail() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState('');
   const [name, setName] = useState('');
+  const [visibility, setVisibility] = useState('public');
   const [newProblem, setNewProblem] = useState({ title: '', platform: 'BeeCrowd', link: '' });
   const [bulkText, setBulkText] = useState('');
 
@@ -17,14 +18,15 @@ export default function AdminSheetDetail() {
     const { data } = await api.get(`/api/admin/sheets/${sheetId}`);
     setSheet(data.sheet);
     setName(data.sheet?.name || '');
+    setVisibility(data.sheet?.visibility || 'public');
     setProblems(data.problems || []);
   };
 
   useEffect(() => { (async()=>{ try{ await load(); } finally{ setLoading(false); } })(); }, [sheetId]);
 
-  const saveName = async () => {
-    await api.put(`/api/admin/sheets/${sheetId}`, { name });
-    setMsg('Sheet name updated.');
+  const saveSheet = async () => {
+    await api.put(`/api/admin/sheets/${sheetId}`, { name, visibility });
+    setMsg('Sheet updated.');
     load();
   };
 
@@ -73,7 +75,11 @@ export default function AdminSheetDetail() {
         <h3>Sheet</h3>
         <div style={{display:'flex', gap:8, alignItems:'center'}}>
           <input className="input" value={name} onChange={(e)=>setName(e.target.value)} />
-          <button className="button" onClick={saveName}>Save</button>
+          <select className="select" value={visibility} onChange={(e)=>setVisibility(e.target.value)}>
+            <option value="public">Public</option>
+            <option value="restricted">Restricted</option>
+          </select>
+          <button className="button" onClick={saveSheet}>Save</button>
           <button className="button secondary" onClick={deleteSheet}>Delete Sheet</button>
           <div style={{marginLeft:'auto'}} />
           <Link to="/admin/sheets" className="button secondary">Back</Link>

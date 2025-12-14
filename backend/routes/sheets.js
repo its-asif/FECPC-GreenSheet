@@ -7,6 +7,14 @@ import Progress from '../models/Progress.js';
 
 const router = Router();
 
+const userCanAccessSheet = (user, sheet, isAdmin) => {
+  if (!sheet) return false;
+  if ((sheet.visibility || 'public') === 'public') return true;
+  if (isAdmin) return true;
+  const allowed = (user?.allowedSheets || []).map((id) => String(id));
+  return allowed.includes(String(sheet._id));
+};
+
 // Only approved users can access sheet data
 router.get('/', requireAuth, async (req, res) => {
   try {
@@ -18,24 +26,27 @@ router.get('/', requireAuth, async (req, res) => {
     }
 
     const allSheets = await Sheet.find({}).lean();
-    // Preload user's progress counts per sheet
     const progresses = await Progress.find({ userUid: req.user.uid }).lean();
     const doneBySheet = new Map();
     for (const p of progresses) {
       const count = Object.values(p.statuses || {}).filter((s) => s === 'Done').length;
       doneBySheet.set(String(p.sheetId), count);
     }
+
     const sheets = [];
     for (const s of allSheets) {
+      const hasAccess = userCanAccessSheet(user, s, isAdmin);
+      if (!hasAccess) continue;
       const probs = await Problem.find({ sheetId: s._id }).lean();
       const totalProblems = probs.length;
       const solvedCount = doneBySheet.get(String(s._id)) || 0;
       sheets.push({
         id: String(s._id),
         name: s.name,
+        visibility: s.visibility || 'public',
         totalProblems,
         solvedCount,
-        problems: probs.map(p => ({ id: String(p._id), title: p.title, platform: p.platform, link: p.link }))
+        problems: probs.map((p) => ({ id: String(p._id), title: p.title, platform: p.platform, link: p.link })),
       });
     }
     res.json({ sheets });

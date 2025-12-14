@@ -8,6 +8,7 @@ export default function AdminDashboard() {
   const [selectedSheet, setSelectedSheet] = useState('');
   const [problem, setProblem] = useState({ title: '', platform: 'BeeCrowd', link: '' });
   const [msg, setMsg] = useState('');
+  const [maintenanceLoading, setMaintenanceLoading] = useState(false);
 
   const load = async () => {
     const [{ data: u }, { data: s }] = await Promise.all([
@@ -49,12 +50,29 @@ export default function AdminDashboard() {
     load();
   }
 
+  const fillDefaults = async () => {
+    if (!confirm('Fill missing default fields across users/sheets/problems?')) return;
+    setMaintenanceLoading(true);
+    try {
+      const { data } = await api.post('/api/admin/maintenance/fill-defaults');
+      setMsg(`Filled defaults. Updated: usersAllowed=${data.updated?.usersAllowed ?? 0}, usersAdmin=${data.updated?.usersAdmin ?? 0}, usersApproved=${data.updated?.usersApproved ?? 0}, sheetsVisibility=${data.updated?.sheetsVisibility ?? 0}, problemsCreatedBy=${data.updated?.problemsCreatedBy ?? 0}`);
+    } catch (e) {
+      setMsg('Failed to fill defaults.');
+    } finally {
+      setMaintenanceLoading(false);
+      load();
+    }
+  }
+
   return (
     <div>
       {msg && <div className="card" style={{borderColor:'#16a34a'}}>{msg}</div>}
 
       <div className="card">
         <h3>Users</h3>
+        <button className="button secondary" disabled={maintenanceLoading} onClick={fillDefaults} style={{marginBottom:8}}>
+          {maintenanceLoading ? 'Filling defaults...' : 'Fill Missing Defaults'}
+        </button>
         <table className="table">
           <thead>
             <tr><th>Name</th><th>Department</th><th>Reg.</th><th>Phone</th><th>Approved</th><th>Action</th></tr>

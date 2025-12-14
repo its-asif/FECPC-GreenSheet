@@ -5,6 +5,7 @@ const ProblemSchema = new mongoose.Schema({
   title: String,
   platform: String,
   link: String,
+  createdByUid: { type: String, index: true },
 }, { timestamps: true });
 
 export default mongoose.models.Problem || mongoose.model('Problem', ProblemSchema);

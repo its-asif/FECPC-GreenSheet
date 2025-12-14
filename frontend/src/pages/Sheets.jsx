@@ -85,34 +85,6 @@ export default function Sheets() {
         </div>
       )}
 
-      {sheets.length > 1 && (
-        <div className="card">
-          <h3>All Sheets Progress</h3>
-          <table className="table">
-            <thead>
-              <tr><th>Sheet</th><th>Progress</th><th>Open</th></tr>
-            </thead>
-            <tbody>
-              {sheets.map(s => {
-                const pct = s.totalProblems ? Math.round(((s.solvedCount || 0) / s.totalProblems) * 100) : 0;
-                return (
-                  <tr key={s.id}>
-                    <td>{s.name}</td>
-                    <td>
-                      <div className="small">{s.solvedCount || 0} / {s.totalProblems || 0} ({pct}%)</div>
-                      <div style={{height:8, background:'#2b2b2b', borderRadius:6, overflow:'hidden', maxWidth:300}}>
-                        <div style={{height:'100%', width:`${pct}%`, background:'#22c55e'}} />
-                      </div>
-                    </td>
-                    <td><button className="button" onClick={()=>setActiveId(s.id)}>Open</button></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-
       {activeSheet && (
         <div className="card">
           <table className="table">
