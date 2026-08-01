@@ -7,8 +7,8 @@ const router = Router();
 // Save or update profile; default approved=false when first created
 router.post('/profile', requireAuth, async (req, res) => {
   try {
-    const { fullName, department, registrationNumber, phoneNumber } = req.body;
-    if (!fullName || !department || !registrationNumber || !phoneNumber) {
+    const { fullName, department, registrationNumber, batch } = req.body;
+    if (!fullName || !department || !registrationNumber || !batch) {
       return res.status(400).json({ error: 'Missing fields' });
     }
     const uid = req.user.uid;
@@ -18,7 +18,7 @@ router.post('/profile', requireAuth, async (req, res) => {
       fullName,
       department,
       registrationNumber,
-      phoneNumber,
+      batch,
       email: req.user.email || existing?.email || null,
       approved: existing?.approved ?? false,
     };
@@ -44,7 +44,7 @@ router.get('/me', requireAuth, async (req, res) => {
         fullName: req.user.name || '',
         department: '',
         registrationNumber: '',
-        phoneNumber: '',
+        batch: '',
         approved: isAdminEmail(req.user?.email) ? true : false, // auto-approve admins
       };
       user = await User.create(minimal);

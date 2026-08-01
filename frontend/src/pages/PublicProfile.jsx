@@ -35,6 +35,7 @@ export default function PublicProfile() {
         <h2>{profile.fullName}</h2>
         <div>Department: {profile.department || '-'}</div>
         <div>Registration: {profile.registrationNumber || '-'}</div>
+        <div>Batch: {profile.batch || '-'}</div>
       </div>
 
       <div className="card">
@@ -48,25 +49,27 @@ export default function PublicProfile() {
           <div>Total Solved: {stats.totalSolved}</div>
           <div>Total Tried: {stats.totalTried}</div>
         </div>
-        <table className="table" style={{marginTop:12}}>
-          <thead>
-            <tr><th>Sheet</th><th>Solved</th><th>Tried</th><th>Total</th><th>%</th></tr>
-          </thead>
-          <tbody>
-            {stats.sheetStats.map((s, idx) => (
-              <tr key={idx}>
-                <td>{s.sheetName}</td>
-                <td>{s.solved}</td>
-                <td>{s.tried}</td>
-                <td>{s.total}</td>
-                <td>{s.percentage}%</td>
-              </tr>
-            ))}
-            {!stats.sheetStats.length && (
-              <tr><td colSpan={5}>No progress yet.</td></tr>
-            )}
-          </tbody>
-        </table>
+        <div className="table-wrapper" style={{marginTop:12}}>
+          <table className="table">
+            <thead>
+              <tr><th>Sheet</th><th>Solved</th><th>Tried</th><th>Total</th><th>%</th></tr>
+            </thead>
+            <tbody>
+              {stats.sheetStats.map((s, idx) => (
+                <tr key={idx}>
+                  <td>{s.sheetName}</td>
+                  <td>{s.solved}</td>
+                  <td>{s.tried}</td>
+                  <td>{s.total}</td>
+                  <td>{s.percentage}%</td>
+                </tr>
+              ))}
+              {!stats.sheetStats.length && (
+                <tr><td colSpan={5}>No progress yet.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

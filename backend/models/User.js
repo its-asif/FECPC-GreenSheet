@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   fullName: String,
   department: String,
   registrationNumber: String,
-  phoneNumber: String,
+  batch: String,
   approved: { type: Boolean, default: false },
   isAdmin: { type: Boolean, default: false },
   allowedSheets: { type: [mongoose.Schema.Types.ObjectId], ref: 'Sheet', default: [] },

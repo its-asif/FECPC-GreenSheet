@@ -14,23 +14,15 @@ export default function AdminBadgeDetail() {
   useEffect(() => {
     (async () => {
       try {
-        const [badgesRes, usersRes] = await Promise.all([
+        const [badgesRes, usersRes, awardedRes] = await Promise.all([
           api.get('/api/badges'),
           api.get('/api/admin/users'),
+          api.get(`/api/badges/${badgeId}/users`),
         ]);
         const b = badgesRes.data.badges.find(x => x.id === badgeId);
         setBadge(b);
         setUsers(usersRes.data.users || []);
-        
-        // Get users who have this badge
-        const awarded = [];
-        for (const u of usersRes.data.users) {
-          const { data } = await api.get(`/api/badges/user/${u.uid}`);
-          if (data.badges.find(ub => ub.id === badgeId)) {
-            awarded.push({ ...u, awardedAt: data.badges.find(ub => ub.id === badgeId).awardedAt });
-          }
-        }
-        setUserBadges(awarded);
+        setUserBadges(awardedRes.data.users || []);
       } finally {
         setLoading(false);
       }
@@ -83,22 +75,24 @@ export default function AdminBadgeDetail() {
 
       <div className="card">
         <h3>Users with this Badge ({userBadges.length})</h3>
-        <table className="table">
-          <thead>
-            <tr><th>User</th><th>Awarded At</th><th>Actions</th></tr>
-          </thead>
-          <tbody>
-            {userBadges.map(u => (
-              <tr key={u.uid}>
-                <td>{u.fullName || u.email}</td>
-                <td>{new Date(u.awardedAt).toLocaleString()}</td>
-                <td>
-                  <button className="button secondary" onClick={()=>revokeBadge(u.uid)}>Revoke</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-wrapper">
+          <table className="table">
+            <thead>
+              <tr><th>User</th><th>Awarded At</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              {userBadges.map(u => (
+                <tr key={u.uid}>
+                  <td>{u.fullName || u.email}</td>
+                  <td>{new Date(u.awardedAt).toLocaleString()}</td>
+                  <td>
+                    <button className="button secondary" onClick={()=>revokeBadge(u.uid)}>Revoke</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

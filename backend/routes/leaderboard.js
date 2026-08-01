@@ -2,6 +2,7 @@ import { Router } from 'express';
 import User from '../models/User.js';
 import Progress from '../models/Progress.js';
 import Sheet from '../models/Sheet.js';
+import UserBadge from '../models/UserBadge.js';
 import { isAdminEmail } from '../middleware/auth.js';
 
 const router = Router();
@@ -40,6 +41,19 @@ router.get('/', async (req, res) => {
       doneByUser.set(uid, (doneByUser.get(uid) || 0) + done);
     }
 
+    const userBadges = await UserBadge.find({}).populate('badgeId').lean();
+    const badgesByUser = new Map();
+    for (const ub of userBadges) {
+      if (!ub.badgeId) continue;
+      const uid = ub.userUid;
+      if (!badgesByUser.has(uid)) badgesByUser.set(uid, []);
+      badgesByUser.get(uid).push({
+        ...ub.badgeId,
+        id: String(ub.badgeId._id),
+        awardedAt: ub.awardedAt,
+      });
+    }
+
     const leaderboard = [];
     for (const u of users) {
       if (sheet && !canSeeSheet(u, sheet)) continue;
@@ -51,6 +65,7 @@ router.get('/', async (req, res) => {
         department: u.department || '',
         registrationNumber: u.registrationNumber || '',
         doneCount,
+        badges: badgesByUser.get(u.uid) || [],
       });
     }
 

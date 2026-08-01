@@ -82,7 +82,7 @@ export default function AdminUserDetail() {
         <div>Email: {u.email}</div>
         <div>Department: {u.department || '-'}</div>
         <div>Registration: {u.registrationNumber || '-'}</div>
-        <div>Phone: {u.phoneNumber || '-'}</div>
+        <div>Batch: {u.batch || '-'}</div>
         <div>Approved: {String(u.approved)}</div>
         <div style={{height:12}} />
         <h4>Stats</h4>
@@ -97,31 +97,33 @@ export default function AdminUserDetail() {
         {!data.sheetAccess?.length ? (
           <div className="small">No sheets yet.</div>
         ) : (
-          <table className="table">
-            <thead>
-              <tr><th>Sheet</th><th>Visibility</th><th>Access</th><th>Action</th></tr>
-            </thead>
-            <tbody>
-              {data.sheetAccess.map((s) => (
-                <tr key={s.id}>
-                  <td>{s.name}</td>
-                  <td>{s.visibility}</td>
-                  <td>{s.hasAccess ? 'Allowed' : 'Blocked'}</td>
-                  <td>
-                    {s.visibility === 'restricted' ? (
-                      s.hasAccess ? (
-                        <button className="button secondary" disabled={updatingSheet === s.id} onClick={()=>toggleSheetAccess(s.id, false)}>Remove</button>
+          <div className="table-wrapper">
+            <table className="table">
+              <thead>
+                <tr><th>Sheet</th><th>Visibility</th><th>Access</th><th>Action</th></tr>
+              </thead>
+              <tbody>
+                {data.sheetAccess.map((s) => (
+                  <tr key={s.id}>
+                    <td>{s.name}</td>
+                    <td>{s.visibility}</td>
+                    <td>{s.hasAccess ? 'Allowed' : 'Blocked'}</td>
+                    <td>
+                      {s.visibility === 'restricted' ? (
+                        s.hasAccess ? (
+                          <button className="button secondary" disabled={updatingSheet === s.id} onClick={()=>toggleSheetAccess(s.id, false)}>Remove</button>
+                        ) : (
+                          <button className="button" disabled={updatingSheet === s.id} onClick={()=>toggleSheetAccess(s.id, true)}>Grant</button>
+                        )
                       ) : (
-                        <button className="button" disabled={updatingSheet === s.id} onClick={()=>toggleSheetAccess(s.id, true)}>Grant</button>
-                      )
-                    ) : (
-                      <span className="small">Public sheet</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                        <span className="small">Public sheet</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
@@ -142,23 +144,25 @@ export default function AdminUserDetail() {
         {!problems.length ? (
           <div className="small">No problems match the selected filters.</div>
         ) : (
-          <table className="table">
-            <thead>
-              <tr><th>Problem</th><th>Platform</th><th>Link</th><th>Sheet</th><th>Status</th><th>Time</th></tr>
-            </thead>
-            <tbody>
-              {problems.map(p => (
-                <tr key={p.id}>
-                  <td>{p.title}</td>
-                  <td><span className="badge">{p.platform}</span></td>
-                  <td><a href={p.link} target="_blank" rel="noreferrer">Open</a></td>
-                  <td>{p.sheetName}</td>
-                  <td>{p.status}</td>
-                  <td>{formatTimeUTCPlus6(p.time)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="table-wrapper">
+            <table className="table">
+              <thead>
+                <tr><th>Problem</th><th>Platform</th><th>Link</th><th>Sheet</th><th>Status</th><th>Time</th></tr>
+              </thead>
+              <tbody>
+                {problems.map(p => (
+                  <tr key={p.id}>
+                    <td>{p.title}</td>
+                    <td><span className="badge">{p.platform}</span></td>
+                    <td><a href={p.link} target="_blank" rel="noreferrer" style={{color: '#818cf8', fontWeight: 600}}>Open ↗</a></td>
+                    <td>{p.sheetName}</td>
+                    <td><span className={`badge status-${p.status}`}>{p.status}</span></td>
+                    <td>{formatTimeUTCPlus6(p.time)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

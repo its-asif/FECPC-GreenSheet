@@ -28,7 +28,7 @@ export default function MyBadges() {
     <div className="card">
       <h2>My Badges</h2>
       {!badges.length && <div>No badges yet.</div>}
-      {badges.length > 0 && <UserBadges uid={user.uid} />}
+      {badges.length > 0 && <UserBadges uid={user.uid} badges={badges} />}
     </div>
   );
 }

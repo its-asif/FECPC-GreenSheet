@@ -5,6 +5,7 @@ import Problem from '../models/Problem.js';
 import Sheet from '../models/Sheet.js';
 import User from '../models/User.js';
 import ActivityLog from '../models/ActivityLog.js';
+import { checkAndAwardSheetBadge } from '../utils/badgeHelper.js';
 
 const router = Router();
 
@@ -26,6 +27,9 @@ router.get('/:sheetId', requireAuth, async (req, res) => {
       User.findOne({ uid }).lean(),
     ]);
     const isAdmin = isAdminEmail(req.user?.email) || !!user?.isAdmin;
+    if ((!user || !user.approved) && !isAdmin) {
+      return res.status(403).json({ error: 'Waiting for approval' });
+    }
     if (!userCanAccessSheet(user, sheet, isAdmin)) return res.status(403).json({ error: 'No access to this sheet' });
     const prog = await Progress.findOne({ userUid: uid, sheetId }).lean();
     res.json({ statuses: prog?.statuses || {} });
@@ -47,6 +51,9 @@ router.put('/:sheetId/:problemId', requireAuth, async (req, res) => {
       User.findOne({ uid }).lean(),
     ]);
     const isAdmin = isAdminEmail(req.user?.email) || !!user?.isAdmin;
+    if ((!user || !user.approved) && !isAdmin) {
+      return res.status(403).json({ error: 'Waiting for approval' });
+    }
     if (!userCanAccessSheet(user, sheet, isAdmin)) return res.status(403).json({ error: 'No access to this sheet' });
 
     const now = new Date();
@@ -61,6 +68,9 @@ router.put('/:sheetId/:problemId', requireAuth, async (req, res) => {
         metadata: { problemId, sheetId },
       });
     }
+
+    // Auto-award / update sheet badges for the user based on progress
+    await checkAndAwardSheetBadge(uid, sheetId);
     
     res.json({ ok: true });
   } catch (err) {

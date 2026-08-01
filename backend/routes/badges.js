@@ -25,15 +25,41 @@ router.get('/user/:uid', async (req, res) => {
   try {
     const { uid } = req.params;
     const userBadges = await UserBadge.find({ userUid: uid }).populate('badgeId').lean();
-    const badges = userBadges.map(ub => ({
-      ...ub.badgeId,
-      id: String(ub.badgeId._id),
-      awardedAt: ub.awardedAt,
-      awardedBy: ub.awardedBy,
-    }));
+    const badges = userBadges
+      .filter(ub => ub.badgeId)
+      .map(ub => ({
+        ...ub.badgeId,
+        id: String(ub.badgeId._id),
+        awardedAt: ub.awardedAt,
+        awardedBy: ub.awardedBy,
+      }));
     res.json({ badges });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch user badges' });
+  }
+});
+
+// Admin: Get all users who have this badge
+router.get('/:badgeId/users', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { badgeId } = req.params;
+    const userBadges = await UserBadge.find({ badgeId }).lean();
+    const userUids = userBadges.map(ub => ub.userUid);
+    const users = await User.find({ uid: { $in: userUids } }).lean();
+    
+    const userMap = new Map(users.map(u => [u.uid, u]));
+    const results = userBadges.map(ub => {
+      const u = userMap.get(ub.userUid);
+      return {
+        uid: ub.userUid,
+        fullName: u?.fullName || 'User',
+        email: u?.email || '',
+        awardedAt: ub.awardedAt,
+      };
+    });
+    res.json({ users: results });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch badge users' });
   }
 });
 

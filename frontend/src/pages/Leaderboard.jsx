@@ -89,29 +89,31 @@ export default function Leaderboard() {
         <button className="button" onClick={applyFilters}>Apply Filters</button>
       </div>
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>User</th>
-            <th>Dept/Reg</th>
-            <th>Total Done</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, idx) => (
-            <tr key={r.uid}>
-              <td>{idx+1}</td>
-              <td style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
-                <Link to={`/profile/${r.uid}`}>{r.name}</Link>
-                <UserBadges uid={r.uid} inline />
-              </td>
-              <td>{r.deptBatch || '-'}</td>
-              <td>{r.doneCount}</td>
+      <div className="table-wrapper">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Dept/Reg</th>
+              <th>Total Done</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((r, idx) => (
+              <tr key={r.uid}>
+                <td>{idx+1}</td>
+                <td style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+                  <Link to={`/profile/${r.uid}`}>{r.name}</Link>
+                  <UserBadges uid={r.uid} badges={r.badges} inline />
+                </td>
+                <td>{r.deptBatch || '-'}</td>
+                <td>{r.doneCount}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

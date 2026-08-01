@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 
-export default function UserBadges({ uid, inline = false }) {
+export default function UserBadges({ uid, inline = false, badges: propBadges }) {
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (propBadges) {
+      setBadges(propBadges);
+      setLoading(false);
+      return;
+    }
     let mounted = true;
     const fetchBadges = async () => {
       if (!uid) return;
@@ -21,7 +26,7 @@ export default function UserBadges({ uid, inline = false }) {
     };
     fetchBadges();
     return () => { mounted = false; };
-  }, [uid]);
+  }, [uid, propBadges]);
 
   // Inline mode (leaderboard): stay quiet when empty/loading
   if (inline) {

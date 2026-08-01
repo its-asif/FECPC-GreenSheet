@@ -73,29 +73,31 @@ export default function AdminDashboard() {
         <button className="button secondary" disabled={maintenanceLoading} onClick={fillDefaults} style={{marginBottom:8}}>
           {maintenanceLoading ? 'Filling defaults...' : 'Fill Missing Defaults'}
         </button>
-        <table className="table">
-          <thead>
-            <tr><th>Name</th><th>Department</th><th>Reg.</th><th>Phone</th><th>Approved</th><th>Action</th></tr>
-          </thead>
-          <tbody>
-            {users.map(u => (
-              <tr key={u.uid}>
-                <td>{u.fullName || u.email}</td>
-                <td>{u.department}</td>
-                <td>{u.registrationNumber}</td>
-                <td>{u.phoneNumber}</td>
-                <td>{String(u.approved)}</td>
-                <td>
-                  {u.approved ? (
-                    <button className="button secondary" onClick={()=>approve(u.uid, false)}>Revoke</button>
-                  ) : (
-                    <button className="button" onClick={()=>approve(u.uid, true)}>Approve</button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-wrapper">
+          <table className="table">
+            <thead>
+              <tr><th>Name</th><th>Department</th><th>Reg.</th><th>Batch</th><th>Approved</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              {users.map(u => (
+                <tr key={u.uid}>
+                  <td>{u.fullName || u.email}</td>
+                  <td>{u.department}</td>
+                  <td>{u.registrationNumber}</td>
+                  <td>{u.batch}</td>
+                  <td>{String(u.approved)}</td>
+                  <td>
+                    {u.approved ? (
+                      <button className="button secondary" onClick={()=>approve(u.uid, false)}>Revoke</button>
+                    ) : (
+                      <button className="button" onClick={()=>approve(u.uid, true)}>Approve</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className="card">

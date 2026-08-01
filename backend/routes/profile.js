@@ -21,16 +21,19 @@ router.get('/:uid', async (req, res) => {
       fullName: user.fullName || 'User',
       department: user.department || '',
       registrationNumber: user.registrationNumber || '',
-      // Hide: email, phoneNumber, approved status
+      batch: user.batch || '',
+      // Hide: email, approved status
     };
 
     // Get badges
     const userBadges = await UserBadge.find({ userUid: uid }).populate('badgeId').lean();
-    const badges = userBadges.map(ub => ({
-      ...ub.badgeId,
-      id: String(ub.badgeId._id),
-      awardedAt: ub.awardedAt,
-    }));
+    const badges = userBadges
+      .filter(ub => ub.badgeId)
+      .map(ub => ({
+        ...ub.badgeId,
+        id: String(ub.badgeId._id),
+        awardedAt: ub.awardedAt,
+      }));
 
     // Get problem stats
     const progresses = await Progress.find({ userUid: uid }).lean();

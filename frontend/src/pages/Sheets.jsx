@@ -87,34 +87,40 @@ export default function Sheets() {
 
       {activeSheet && (
         <div className="card">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Problem</th>
-                <th>Platform</th>
-                <th>Link</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {activeSheet.problems.map((p, idx) => (
-                <tr key={p.id}>
-                  <td>{idx+1}</td>
-                  <td>{p.title}</td>
-                  <td><span className="badge">{p.platform}</span></td>
-                  <td><a href={p.link} target="_blank" rel="noreferrer">Open</a></td>
-                  <td>
-                    <select className="select" value={statuses[p.id] || 'Unopened'} onChange={(e)=>updateStatus(p.id, e.target.value)}>
-                      <option>Unopened</option>
-                      <option>Tried</option>
-                      <option>Done</option>
-                    </select>
-                  </td>
+          <div className="table-wrapper">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Problem</th>
+                  <th>Platform</th>
+                  <th>Link</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {activeSheet.problems.map((p, idx) => (
+                  <tr key={p.id}>
+                    <td>{idx+1}</td>
+                    <td>{p.title}</td>
+                    <td><span className="badge">{p.platform}</span></td>
+                    <td><a href={p.link} target="_blank" rel="noreferrer" style={{color: '#818cf8', fontWeight: 600}}>Open ↗</a></td>
+                    <td>
+                      <select 
+                        className={`status-select ${statuses[p.id] || 'Unopened'}`}
+                        value={statuses[p.id] || 'Unopened'} 
+                        onChange={(e)=>updateStatus(p.id, e.target.value)}
+                      >
+                        <option value="Unopened">Unopened</option>
+                        <option value="Tried">Tried</option>
+                        <option value="Done">Done</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

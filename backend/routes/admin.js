@@ -5,6 +5,8 @@ import Sheet from '../models/Sheet.js';
 import Problem from '../models/Problem.js';
 import Progress from '../models/Progress.js';
 import ActivityLog from '../models/ActivityLog.js';
+import Badge from '../models/Badge.js';
+import UserBadge from '../models/UserBadge.js';
 
 const router = Router();
 
@@ -20,7 +22,7 @@ const buildProblemCountMap = async () => {
 
 const buildDoneCountMap = async () => {
   const grouped = await Progress.aggregate([
-    { $project: { userUid: 1, statuses: { $objectToArray: '$statuses' } } },
+    { $project: { userUid: 1, statuses: { $objectToArray: { $ifNull: ['$statuses', {}] } } } },
     { $unwind: { path: '$statuses', preserveNullAndEmptyArrays: true } },
     { $match: { 'statuses.v': 'Done' } },
     { $group: { _id: '$userUid', count: { $sum: 1 } } },
@@ -328,6 +330,13 @@ router.delete('/sheets/:sheetId', requireAuth, requireAdmin, async (req, res) =>
     const { sheetId } = req.params;
     await Problem.deleteMany({ sheetId });
     await Progress.deleteMany({ sheetId });
+
+    // Find and delete all badges and their user assignments associated with this sheet
+    const badgesToDelete = await Badge.find({ sheetId }).select('_id').lean();
+    const badgeIds = badgesToDelete.map(b => b._id);
+    await UserBadge.deleteMany({ badgeId: { $in: badgeIds } });
+    await Badge.deleteMany({ sheetId });
+
     await Sheet.deleteOne({ _id: sheetId });
     await User.updateMany({}, { $pull: { allowedSheets: sheetId } });
     res.json({ ok: true });

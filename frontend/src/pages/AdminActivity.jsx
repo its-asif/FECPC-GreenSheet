@@ -48,21 +48,23 @@ export default function AdminActivity() {
       </div>
 
       <div className="card">
-        <table className="table">
-          <thead>
-            <tr><th>Time</th><th>User</th><th>Action</th><th>Metadata</th></tr>
-          </thead>
-          <tbody>
-            {logs.map(log => (
-              <tr key={log.id}>
-                <td>{new Date(log.timestamp).toLocaleString()}</td>
-                <td>{log.userName}</td>
-                <td>{log.action}</td>
-                <td><pre style={{fontSize:'0.85em', whiteSpace:'pre-wrap'}}>{JSON.stringify(log.metadata, null, 2)}</pre></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-wrapper">
+          <table className="table">
+            <thead>
+              <tr><th>Time</th><th>User</th><th>Action</th><th>Metadata</th></tr>
+            </thead>
+            <tbody>
+              {logs.map(log => (
+                <tr key={log.id}>
+                  <td>{new Date(log.timestamp).toLocaleString()}</td>
+                  <td>{log.userName}</td>
+                  <td>{log.action}</td>
+                  <td><pre style={{fontSize:'0.85em', whiteSpace:'pre-wrap'}}>{JSON.stringify(log.metadata, null, 2)}</pre></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

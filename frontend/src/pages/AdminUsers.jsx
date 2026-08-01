@@ -136,47 +136,49 @@ export default function AdminUsers() {
             <button className="button secondary" onClick={()=>setSelectedUids(new Set())}>Clear Selection</button>
           </div>
         )}
-        <table className="table">
-          <thead>
-            <tr>
-              <th><input type="checkbox" checked={selectedUids.size === users.length && users.length > 0} onChange={toggleSelectAll} /></th>
-              <th>Name</th><th>Email</th><th>Dept</th><th>Reg</th><th>Phone</th><th>Added Problems</th><th>Done</th><th>Admin</th><th>Approved</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(u => (
-              <tr key={u.uid}>
-                <td><input type="checkbox" checked={selectedUids.has(u.uid)} onChange={()=>toggleSelect(u.uid)} /></td>
-                <td><Link to={`/admin/users/${u.uid}`}>{u.fullName || u.email}</Link></td>
-                <td>{u.email}</td>
-                <td>{u.department}</td>
-                <td>{u.registrationNumber}</td>
-                <td>{u.phoneNumber}</td>
-                <td>{u.problemsAddedCount ?? 0}</td>
-                <td>{u.doneCount ?? 0}</td>
-                <td>
-                  {u.isAdmin ? (
-                    <>
-                      <span className="badge">Admin</span>
-                      <button className="button secondary" style={{marginLeft:8}} onClick={()=>setAdmin(u.uid, false)}>Remove Admin</button>
-                    </>
-                  ) : (
-                    <button className="button" onClick={()=>setAdmin(u.uid, true)}>Make Admin</button>
-                  )}
-                </td>
-                <td>{String(u.approved)}</td>
-                <td>
-                  {u.approved ? (
-                    <button className="button secondary" onClick={()=>approve(u.uid, false)}>Revoke</button>
-                  ) : (
-                    <button className="button" onClick={()=>approve(u.uid, true)}>Approve</button>
-                  )}
-                  <button className="button secondary" style={{marginLeft:8}} onClick={()=>deleteUser(u.uid)}>Delete</button>
-                </td>
+        <div className="table-wrapper">
+          <table className="table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" checked={selectedUids.size === users.length && users.length > 0} onChange={toggleSelectAll} /></th>
+                <th>Name</th><th>Email</th><th>Dept</th><th>Reg</th><th>Batch</th><th>Added Problems</th><th>Done</th><th>Admin</th><th>Approved</th><th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map(u => (
+                <tr key={u.uid}>
+                  <td><input type="checkbox" checked={selectedUids.has(u.uid)} onChange={()=>toggleSelect(u.uid)} /></td>
+                  <td><Link to={`/admin/users/${u.uid}`}>{u.fullName || u.email}</Link></td>
+                  <td>{u.email}</td>
+                  <td>{u.department}</td>
+                  <td>{u.registrationNumber}</td>
+                  <td>{u.batch}</td>
+                  <td>{u.problemsAddedCount ?? 0}</td>
+                  <td>{u.doneCount ?? 0}</td>
+                  <td>
+                    {u.isAdmin ? (
+                      <>
+                        <span className="badge">Admin</span>
+                        <button className="button secondary" style={{marginLeft:8}} onClick={()=>setAdmin(u.uid, false)}>Remove Admin</button>
+                      </>
+                    ) : (
+                      <button className="button" onClick={()=>setAdmin(u.uid, true)}>Make Admin</button>
+                    )}
+                  </td>
+                  <td>{String(u.approved)}</td>
+                  <td>
+                    {u.approved ? (
+                      <button className="button secondary" onClick={()=>approve(u.uid, false)}>Revoke</button>
+                    ) : (
+                      <button className="button" onClick={()=>approve(u.uid, true)}>Approve</button>
+                    )}
+                    <button className="button secondary" style={{marginLeft:8}} onClick={()=>deleteUser(u.uid)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

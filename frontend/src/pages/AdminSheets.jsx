@@ -55,26 +55,28 @@ export default function AdminSheets() {
           <button className="button secondary" onClick={seedGreen}>Seed Green Sheet</button>
         </div>
         <div style={{height:12}} />
-        <table className="table">
-          <thead>
-            <tr><th>Name</th><th>Visibility</th><th>Problems</th><th>Actions</th></tr>
-          </thead>
-          <tbody>
-            {sheets.map(s => (
-              <tr key={s.id}>
-                <td>{s.name}</td>
-                <td>{s.visibility}</td>
-                <td>{s.problemCount}</td>
-                <td>
-                  <Link className="button" to={`/admin/sheets/${s.id}`}>Open</Link>
-                  <button className="button secondary" style={{marginLeft:8}} onClick={()=>toggleVisibility(s.id, s.visibility)}>
-                    {s.visibility === 'restricted' ? 'Make Public' : 'Restrict'}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-wrapper">
+          <table className="table">
+            <thead>
+              <tr><th>Name</th><th>Visibility</th><th>Problems</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              {sheets.map(s => (
+                <tr key={s.id}>
+                  <td>{s.name}</td>
+                  <td>{s.visibility}</td>
+                  <td>{s.problemCount}</td>
+                  <td>
+                    <Link className="button" to={`/admin/sheets/${s.id}`}>Open</Link>
+                    <button className="button secondary" style={{marginLeft:8}} onClick={()=>toggleVisibility(s.id, s.visibility)}>
+                      {s.visibility === 'restricted' ? 'Make Public' : 'Restrict'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

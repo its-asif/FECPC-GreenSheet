@@ -112,32 +112,34 @@ problem_name2,  beecrowd,  https://judge.beecrowd.com/en/problems/view/2755
           <div style={{height:8}} />
           <button className="button" onClick={addBulk}>Add in bulk</button>
         </div>
-        <table className="table">
-          <thead>
-            <tr><th>#</th><th>Title</th><th>Platform</th><th>Link</th><th>Actions</th></tr>
-          </thead>
-          <tbody>
-            {problems.map((p, idx) => (
-              <tr key={p.id}>
-                <td>{idx+1}</td>
-                <td><input className="input" value={p.title} onChange={(e)=>setProblems(ps => ps.map(x=>x.id===p.id?{...x,title:e.target.value}:x))} /></td>
-                <td>
-                  <select className="select" value={p.platform} onChange={(e)=>setProblems(ps => ps.map(x=>x.id===p.id?{...x,platform:e.target.value}:x))}>
-                    <option>BeeCrowd</option>
-                    <option>Codeforces</option>
-                    <option>LeetCode</option>
-                    <option>CodeChef</option>
-                  </select>
-                </td>
-                <td><input className="input" value={p.link} onChange={(e)=>setProblems(ps => ps.map(x=>x.id===p.id?{...x,link:e.target.value}:x))} /></td>
-                <td>
-                  <button className="button" onClick={()=>saveProblem(p.id, p)}>Save</button>
-                  <button className="button secondary" onClick={()=>removeProblem(p.id)} style={{marginLeft:8}}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-wrapper">
+          <table className="table">
+            <thead>
+              <tr><th>#</th><th>Title</th><th>Platform</th><th>Link</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              {problems.map((p, idx) => (
+                <tr key={p.id}>
+                  <td>{idx+1}</td>
+                  <td><input className="input" value={p.title} onChange={(e)=>setProblems(ps => ps.map(x=>x.id===p.id?{...x,title:e.target.value}:x))} /></td>
+                  <td>
+                    <select className="select" value={p.platform} onChange={(e)=>setProblems(ps => ps.map(x=>x.id===p.id?{...x,platform:e.target.value}:x))}>
+                      <option>BeeCrowd</option>
+                      <option>Codeforces</option>
+                      <option>LeetCode</option>
+                      <option>CodeChef</option>
+                    </select>
+                  </td>
+                  <td><input className="input" value={p.link} onChange={(e)=>setProblems(ps => ps.map(x=>x.id===p.id?{...x,link:e.target.value}:x))} /></td>
+                  <td>
+                    <button className="button" onClick={()=>saveProblem(p.id, p)}>Save</button>
+                    <button className="button secondary" onClick={()=>removeProblem(p.id)} style={{marginLeft:8}}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
